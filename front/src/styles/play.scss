@@ -1,0 +1,42 @@
+.gamePage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gamePage h1 {
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.gamePage p {
+    text-align: center;
+}
+
+.gamePage button {
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    border-radius: 3px;
+    padding: 8px 12px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.game {
+    display: flex;
+    flex-direction: row;
+}
+
+.game li {
+    margin: 0 10px;
+}
+
+.game li img {
+    width: 130px;
+    height: 120px;
+}
