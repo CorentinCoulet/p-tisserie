@@ -8,7 +8,19 @@ export const gameApiSlice = createApi({
     endpoints: (builder) => ({
         getPastries : builder.query({
             query: () => '/game/pastries'
-        })
+        }),
+        getPastriesWon : builder.query({
+            query: (quantity) => `/game/win-pastries/${quantity}`
+        }),
+        postLogin: builder.mutation({
+            query: (data) => ({
+                url: '/login',
+                method: 'POST',
+                body: data,
+                credentials: 'include'
+            }) 
+        })  
     })
 })
-export const { useGetPastriesQuery } = gameApiSlice
+
+export const { useGetPastriesQuery, useGetPastriesWonQuery, usePostLoginMutation } = gameApiSlice;

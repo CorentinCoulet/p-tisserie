@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import Home from './pages/home';
 import Play from './pages/play';
 import Contact from './pages/contact';
@@ -7,6 +8,8 @@ import Navbar from './pages/Navbar';
 import NotFound from './pages/NotFound';
 
 function App() {
+
+  //const isLoggedIn = useSelector((state) => state.gameAuth.isLoggedIn);
 
   return (
     <BrowserRouter>
