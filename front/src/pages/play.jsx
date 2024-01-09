@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import D1 from '../assets/1.jpg'
 import D2 from '../assets/2.jpg'
 import D3 from '../assets/3.jpg'
@@ -9,7 +10,9 @@ import '../styles/play.scss'
 const Play = () => {
 
     const [diceResults, setDiceResults] = useState([1, 1, 1, 1, 1]);
-    const value = 3;
+    const [value, setValue] = useState(3);
+    const frequencyNumber = [0, 0, 0, 0, 0, 0];
+    const [wonPastries, setWonPastries] = useState(0);
 
     const dices = {
         1: D1,
@@ -20,10 +23,25 @@ const Play = () => {
         6: D6
     }
 
+    useEffect(() => {
+        const checkWinningCombination = () => {
+            if(Math.max(...frequencyNumber) > 1){
+                setWonPastries(Math.max(...frequencyNumber));
+            }
+        }
+        checkWinningCombination();
+    }, [diceResults, frequencyNumber]);
+
     const rollDice = () => {
-        const newResults = Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1);
-        setDiceResults(newResults);
-      };
+        if(value > 0 && Math.max(frequencyNumber) < 2 || value === 3) {
+            const newResults = Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1);
+            setDiceResults(newResults); 
+            setValue(prevValue => prevValue - 1);
+            newResults.forEach((number) => {
+                frequencyNumber[number-1] += 1;
+            })
+        }
+    };
 
     return (
         <div className='gamePage'>
@@ -42,7 +60,21 @@ const Play = () => {
                 </li>
                 ))}
             </ul>
-            <button onClick={rollDice}>Lancer les dés ({value} essais restants)</button>
+            {wonPastries > 1 && (
+                <div>
+                    <p>Vous avez gagné {wonPastries} pâtisserie(s)!</p>
+                    
+                </div>
+            )}
+            <button onClick={rollDice}>
+                {value > 0 && Math.max(...frequencyNumber) < 2
+                    ? `Lancer les dés (${value} essais restants)`
+                    : 
+                    (
+                        'Vous n\'avez plus d\'essais'
+                    )
+                }
+            </button>  
         </div>
     )
 }

@@ -28,7 +28,7 @@ const Home = () => {
   return (
     <ul className="list">
       <li className="challenge">
-          <p>Tentez de remporter une ou plusieurs patisseries avec notre jeu de yam's</p>
+          <p>Tentez de remporter une ou plusieurs patisseries <br /> avec notre jeu de yam's</p>
           <NavLink to="/play" className='navlink playGame'>Jouer</NavLink> 
           <p>Lots Restants:</p>
       </li>
