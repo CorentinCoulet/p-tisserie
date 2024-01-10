@@ -13,3 +13,21 @@ img {
     width: 160px;
     height: 140px;
 }
+
+button {
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background-color: black;
+    color: white;
+    border-radius: 3px;
+    padding: 8px 12px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+p {
+    font-size: large;
+}

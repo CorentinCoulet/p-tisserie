@@ -23,8 +23,39 @@ export const gameApiSlice = createApi({
         getMe: builder.query({
             query: () => '/me',
             credentials: 'include'
-        })
+        }),
+        updatePastry: builder.mutation({
+            query: (data) => ({
+                url: `/api/pastrie/${data.id}`,
+                method: 'PUT',
+                body: data,
+                credentials: 'include'
+            })
+        }),
+        deletePastry: builder.mutation({
+            query: (id) => ({
+                url: `/api/pastrie/${id}`,
+                method: 'DELETE',
+                credentials: 'include'
+            })
+        }),
+        postPastry: builder.mutation({
+            query: (data) => ({
+                url: '/api/pastrie',
+                method: 'POST',
+                body: data,
+                credentials: 'include'
+            })
+        }),
     })
 })
 
-export const { useGetPastriesQuery, useGetPastriesWonQuery, usePostLoginMutation, useGetMeQuery } = gameApiSlice;
+export const {  
+    useGetPastriesQuery, 
+    useGetPastriesWonQuery, 
+    usePostLoginMutation, 
+    useGetMeQuery,
+    useUpdatePastryMutation,
+    useDeletePastryMutation,
+    usePostPastryMutation
+} = gameApiSlice;

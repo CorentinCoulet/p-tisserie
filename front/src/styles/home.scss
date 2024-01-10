@@ -3,7 +3,7 @@
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    margin: 0 15%;
+    margin: 0 20%;
     text-align: center;
 }
   
@@ -17,19 +17,19 @@
 
 .challenge {
     flex-grow: 1;
-}
 
-.challenge p {
-    font-weight: bold;
-}
+    p {
+        font-weight: bold;  
+    }
+  
+    p:first-child {
+        font-size: 2.5em;
+    }
 
-.challenge p:first-child {
-    font-size: 2.5em;
-}
-
-.challenge p:last-child {
-    font-size: 1.3em;
-    text-align: center;
+    p:last-child {
+        font-size: 1.3em;
+        text-align: center; 
+    }
 }
 
 .navlink {
