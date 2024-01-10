@@ -17,5 +17,4 @@ const gameAuthSlice = createSlice({
   },
 });
 
-export const { setLoggedIn, setLoggedOut } = gameAuthSlice.actions;
-export default gameAuthSlice.reducer;
+export const { reducer: gameAuthReducer, actions: { setLoggedIn, setLoggedOut } } = gameAuthSlice;

@@ -19,8 +19,12 @@ export const gameApiSlice = createApi({
                 body: data,
                 credentials: 'include'
             }) 
-        })  
+        }),
+        getMe: builder.query({
+            query: () => '/me',
+            credentials: 'include'
+        })
     })
 })
 
-export const { useGetPastriesQuery, useGetPastriesWonQuery, usePostLoginMutation } = gameApiSlice;
+export const { useGetPastriesQuery, useGetPastriesWonQuery, usePostLoginMutation, useGetMeQuery } = gameApiSlice;

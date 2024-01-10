@@ -1,14 +1,19 @@
 import { useState } from 'react';
 import '../styles/login.scss';
-import { usePostLoginMutation } from '../slices/gameApiSlice';
+import { usePostLoginMutation, useGetMeQuery } from '../slices/gameApiSlice';
+import { setLoggedIn } from '../slices/gameAuthSlice';
+import { useDispatch } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ redirectTo }) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const dispatch = useDispatch();
 
     const [newPortLogin] = usePostLoginMutation();
+    const { data, isLoading } = useGetMeQuery();
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
@@ -22,24 +27,25 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await newPortLogin({ email, password });
-            const responseData = response.data;
-            if(responseData.id != isNaN){
-                setIsLoggedIn(true);
+            console.log(response);
+            if(!response.error){
+                dispatch(setLoggedIn());
+                setIsLoggedIn(true)
+            } else {
+                alert('Email ou mot de passe incorrect');
             }
         } catch (error) {
-            console.error('Erreur de connexion:', error);
+            alert('Erreur de connexion:', error);
         }
     } 
-    
 
-    const handleLogoutClick = () => {
-        setIsLoggedIn(false);
-        console.log('Déconnecté avec succès !');
-    };
+    if (isLoggedIn) {
+        return <Navigate to={redirectTo} />;
+    }
 
     return (
         <div>
-        {isLoggedIn === false &&
+        {!isLoggedIn  &&
             <form className="login" onSubmit={handleSubmit}>
                 <label>
                     Your email
@@ -66,12 +72,11 @@ const Login = () => {
                 <button type="submit">Login</button>
             </form>   
         }
-        {isLoggedIn === true &&
+        {isLoading && isLoggedIn &&
             <div>
-                Bienvenue sur le Back Office !
-                <form className="login" onSubmit={handleLogoutClick}>
-                   <button type="submit">Logout</button> 
-                </form>
+                <p>Bienvenue, {data.name}!</p>
+                <p>Email: {data.email}</p>
+                <p>Status: {data.status}</p>
             </div>
         }
         </div>   

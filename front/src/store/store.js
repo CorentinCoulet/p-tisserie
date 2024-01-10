@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { gameApiSlice, gameAuthSlice } from '../slices/gameApiSlice'
+import { gameApiSlice } from '../slices/gameApiSlice'
+import { gameAuthReducer } from '../slices/gameAuthSlice'
 
 export default configureStore({
     reducer: {
         'gameApi': gameApiSlice.reducer,
-        'gameAuth': gameAuthSlice.reducer,
+        'gameAuth': gameAuthReducer,
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware().concat(gameApiSlice.middleware)
