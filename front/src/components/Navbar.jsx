@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import Logout from '../components/logout';
 import '../styles/Navbar.scss'
 
 const Navbar = () => {
@@ -19,8 +20,11 @@ const Navbar = () => {
           {!isLoggedIn ? (
               <NavLink style={checkIfIsActive} to="/login" className='navbarTool'>Login</NavLink> 
             ) : (
-              <NavLink style={checkIfIsActive} to="/logout" className='navbarTool'>Logout</NavLink> 
-            )  
+              <>
+                <NavLink style={checkIfIsActive} to="/dashboard" className='navbarTool'>Dashboard</NavLink>
+                <Logout redirectTo='/login'/> 
+              </>
+            ) 
           }
           <NavLink style={checkIfIsActive} to="/contact" className='navbarTool'>Contact</NavLink> 
       </li>

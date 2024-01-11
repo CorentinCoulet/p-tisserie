@@ -7,16 +7,29 @@ import D4 from '../assets/4.jpg'
 import D5 from '../assets/5.jpg'
 import D6 from '../assets/6.jpg'
 import '../styles/play.scss'
+import { useDispatch, useSelector } from 'react-redux';
+import { 
+    updateDiceResult, 
+    updateDiceValue, 
+    updateFrequencyNumber,
+    updateWonPastries 
+} from '../slices/gameDiceSlice';
 
 const Play = () => {
 
-    const [diceResults, setDiceResults] = useState([1, 1, 1, 1, 1]);
-    const [value, setValue] = useState(3);
-    const [frequencyNumber, setFrequencyNumber] = useState(() => [0, 0, 0, 0, 0, 0], []);
-    const [wonPastries, setWonPastries] = useState(0);
+    // const [diceResults, setDiceResults] = useState([1, 1, 1, 1, 1]);
+    // const [value, setValue] = useState(3);
+    // const [frequencyNumber, setFrequencyNumber] = useState(() => [0, 0, 0, 0, 0, 0], []);
+    // const [wonPastries, setWonPastries] = useState(0);
     const [hasStarted, setHasStarted] = useState(false);
     const [showResult, setShowResult] = useState(false);
     const [rewardPastries, setRewardPastries] = useState([]);
+
+    const dispatch = useDispatch();
+    const diceResult = useSelector((state) => state.gameDice.diceResult);
+    const diceValue = useSelector((state) => state.gameDice.value);
+    const frequencyNumber = useSelector((state) => state.gameDice.frequencyNumber);
+    const wonPastries = useSelector((state) => state.gameDice.wonPastries);
 
     const dices = {
         1: D1,
@@ -35,7 +48,7 @@ const Play = () => {
         const checkWinningCombination = () => {
             if(hasStarted && Math.max(...frequencyNumber) > 1){
                 setTimeout(() => {
-                    setWonPastries(Math.max(...frequencyNumber));
+                    dispatch(updateWonPastries(Math.max(...frequencyNumber)));
                     setShowResult(true);
                 }, 500);
             }
@@ -43,7 +56,7 @@ const Play = () => {
 
         checkWinningCombination();
         
-    }, [frequencyNumber, hasStarted]);
+    }, [frequencyNumber, hasStarted, dispatch]);
 
     useEffect(() => {
         if(isSuccess){
@@ -52,25 +65,24 @@ const Play = () => {
     }, [isSuccess, data])
 
     const rollDice = () => {
-        if (value > 0 && Math.max(...frequencyNumber) < 2 || value === 3) {
+        if (diceValue > 0 && Math.max(...frequencyNumber) < 2 || diceValue === 3) {
             const newResults = Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1);
-            setDiceResults(newResults);
-            setValue((prevValue) => prevValue - 1);
+            dispatch(updateDiceResult(newResults));
+            dispatch(updateDiceValue());
+            const newFrequency = [...frequencyNumber];
             newResults.forEach((number) => {
-                setFrequencyNumber((prevFrequency) => {
-                    const newFrequency = [...prevFrequency];
-                    newFrequency[number - 1] += 1;
-                    return newFrequency;
-                });
+                newFrequency[number - 1] += 1;
             });
+            dispatch(updateFrequencyNumber(newFrequency));
+
             setHasStarted(true);
         }
-    };
+    }
 
     return (
         <div className='gamePage'>
             <h1>Jeu du yams</h1>
-            <p>Vous avez {value} lancés</p>
+            <p>Vous avez {diceValue} lancés</p>
             <p>
                 Si vous obtenez une paire (2 dés identiques), vous gagnez une pâtisserie. <br /> <br />
                 Si vous obtenez un brelan (3 dés identiques), vous gagnez 2 pâtisseries. <br /> <br />
@@ -78,7 +90,7 @@ const Play = () => {
                 Bonne chance !!
             </p>
             <ul className='game'>
-            {diceResults.map((result, index) => (
+            {diceResult.map((result, index) => (
                 <li key={index}>
                     <img src={dices[result]} alt={`dé ${index + 1}`} />
                 </li>
@@ -103,8 +115,8 @@ const Play = () => {
                 ))
             }   
             <button onClick={rollDice}>
-                {value > 0 && Math.max(...frequencyNumber) < 2
-                    ? `Lancer les dés (${value} essais restants)`
+                {diceValue > 0 && Math.max(...frequencyNumber) < 2
+                    ? `Lancer les dés (${diceValue} essais restants)`
                     : 
                     (
                         'Vous n\'avez plus d\'essais'

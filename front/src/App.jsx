@@ -19,8 +19,8 @@ function App() {
         <Route exact path='/' element={<Home />} />
         <Route path='/play' element={isLoggedIn ? <Play /> : <Navigate to="/login" />} />
         <Route path='/contact' element={<Contact />} />
-        <Route path='/login' element={<Login redirectTo="/dashboard" />} />
-        <Route path='/dashboard' element={<Dashboard redirectTo="/login" />} />
+        <Route path='/login' element={<Login redirectTo="/" />} />
+        <Route path='/dashboard' element={isLoggedIn ? <Dashboard /> : <Navigate to='/' />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </BrowserRouter>

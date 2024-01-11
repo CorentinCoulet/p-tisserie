@@ -31,12 +31,12 @@ const Login = ({ redirectTo }) => {
             const response = await newPortLogin({ email, password });
             if(!response.error){
                 dispatch(setLoggedIn());
-                setIsLoggedIn(true)
+                setIsLoggedIn(true);
             } else {
-                alert('Email ou mot de passe incorrect')
+                alert('Email ou mot de passe incorrect');
             }
         } catch (error) {
-            alert('Erreur de connexion: Une erreur s\'est produite')
+            alert('Erreur de connexion: Une erreur s\'est produite');
         } finally {
             setIsLoading(false);
         }
@@ -52,7 +52,7 @@ const Login = ({ redirectTo }) => {
 
     return (
         <div>
-            {!isLoggedIn  &&
+
                 <form className="login" onSubmit={handleSubmit}>
                     <label>
                         Your email
@@ -78,7 +78,7 @@ const Login = ({ redirectTo }) => {
                     <br />
                     <button type="submit">Login</button>
                 </form>   
-            }
+            
         </div>   
     )  
 }
