@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useGetPastriesWonQuery } from '../slices/gameApiSlice';
+import { useGetMeQuery, useGetPastriesWonQuery } from '../slices/gameApiSlice';
 import D1 from '../assets/1.jpg';
 import D2 from '../assets/2.jpg';
 import D3 from '../assets/3.jpg';
@@ -17,7 +17,8 @@ import {
     updateShowResult,
     updateSelectedDice,
     updateRollingDice,
-    updateCanRollDice
+    updateCanRollDice,
+    updateLocalStorageData
 } from '../slices/gameDiceSlice';
 
 const Play = () => {
@@ -33,6 +34,13 @@ const Play = () => {
         6: D6
     }
 
+    const user = useGetMeQuery();
+    const userId = user.data?.id;
+    const { data, isLoading, isSuccess, isError, error } = useGetPastriesWonQuery(
+        game.wonPastries - 1
+    );
+
+    // gestion victoire
     useEffect(() => {
         if(game.hasStarted && Math.max(...game.frequencyNumber) > 1){
             dispatch(updateWonPastries());
@@ -40,18 +48,32 @@ const Play = () => {
         }
     }, [dispatch, game.frequencyNumber, game.hasStarted]);
 
+    // gestion time + données récup
     useEffect(() => {
         const currentDate = new Date().toISOString().split('T')[0];
-        const hasAttemptedToday = localStorage.getItem(`attempt_${currentDate}`);
-    
+        const hasAttemptedToday = localStorage.getItem(`attempt_${userId}_${currentDate}`);
+        const localStorageData = localStorage.getItem(`gameData_${userId}`);
+
+        if(localStorageData){
+            const parseData = JSON.parse(localStorageData);
+            dispatch(updateLocalStorageData(parseData));
+        }
         if (hasAttemptedToday) {
           dispatch(updateCanRollDice());
         }
-    }, [dispatch]);
+    }, [dispatch, userId]);
 
-    const { data, isLoading, isSuccess, isError, error } = useGetPastriesWonQuery(
-        game.wonPastries - 1
-    );
+    // gestion données save
+    useEffect(() => {
+        if(userId){
+            const localStorageData = JSON.stringify({
+                remainingRolls: game.value,
+                currentDice: game.diceResult,
+            });
+            localStorage.setItem(`gameData_${userId}`, localStorageData);  
+        }
+        
+    }, [game.value, game.diceResult, userId])
 
     const handleDiceClick = (index) => {
         if (game.hasStarted && game.value < 3) {      

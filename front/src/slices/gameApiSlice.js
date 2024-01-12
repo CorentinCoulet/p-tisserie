@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-// const baseUrl = process.env.REACT_APP_API_BASE_URL;
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const gameApiSlice = createApi({
     reducerPath: 'gameApi',
-    baseQuery: fetchBaseQuery({ baseUrl : 'http://localhost:3001' }),
+    baseQuery: fetchBaseQuery({ baseUrl }),
     tagTypes: ['User', 'Pastries'],
     endpoints: (builder) => ({
 
@@ -43,6 +43,15 @@ export const gameApiSlice = createApi({
             query: () => ({
                url: '/me',
                credentials: 'include',
+            }),
+            providesTags: ['User'],
+        }),
+
+        // USERS
+        getUsers: builder.query({
+            query: () => ({
+                url: '/users',
+                credentials: 'include',
             }),
             providesTags: ['User'],
         }),
@@ -87,6 +96,7 @@ export const {
     usePostLoginMutation, 
     useGetLogoutMutation,
     useGetMeQuery,
+    useGetUsersQuery,
     useUpdatePastryMutation,
     useDeletePastryMutation,
     usePostPastryMutation
