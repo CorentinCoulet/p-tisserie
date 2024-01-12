@@ -1,11 +1,9 @@
 import { usePostPastryMutation } from '../slices/gameApiSlice';
-import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 const AddPastry = ({ editedItem, setEditedItem, setIsAdding }) => {
 
     const [postPastryMutation, postPastryRequest] = usePostPastryMutation();
-
     const handleCancelAdd = () => {
         setIsAdding(false);
         setEditedItem({

@@ -9,22 +9,26 @@ export const gameDiceSlice = createSlice({
         wonPastries: 0,
         hasStarted: false,
         showResult: false,
-        rewardPastries: null,
+        selectedDice: [],
+        rollingDice: true,
+        canRollDice: true,
     },
     reducers: {
         updateDiceResult: (state) => {
-            state.diceResult = Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1);
+            const newDiceResult = state.diceResult.map((die, index) => {
+                return state.selectedDice.includes(index) ? die : Math.floor(Math.random() * 6) + 1;
+            });
+            state.diceResult = newDiceResult;
             state.value -= 1;
         },
-        updateFrequencyNumber: (state, action) => {
+        updateFrequencyNumber: (state) => {
             state.frequencyNumber = [0,0,0,0,0,0];
-            action.payload.forEach((number) => {
+            state.diceResult.forEach((number) => {
                 state.frequencyNumber[number - 1] += 1;
             });
         },
         updateWonPastries: (state) => {
             state.wonPastries = Math.max(...state.frequencyNumber);
-            console.log(state.wonPastries);
         },
         updateHasStarted: (state) => {
             state.hasStarted = true;
@@ -32,9 +36,15 @@ export const gameDiceSlice = createSlice({
         updateShowResult: (state) => {
             state.showResult = true;
         },
-        updateRewardPastries: (state, action) => {
-            state.rewardPastries = action.payload;
+        updateSelectedDice: (state, action) => {
+            state.selectedDice = action.payload.map(Number);
         },
+        updateRollingDice : (state) => {
+            state.rollingDice = false;
+        },
+        updateCanRollDice : (state) => {
+            state.canRollDice = false;
+        }
     }
 })
 
@@ -44,6 +54,8 @@ export const {
     updateWonPastries, 
     updateHasStarted, 
     updateShowResult,
-    updateRewardPastries,
+    updateSelectedDice,
+    updateRollingDice,
+    updateCanRollDice
 } = gameDiceSlice.actions;
 export default gameDiceSlice.reducer;
