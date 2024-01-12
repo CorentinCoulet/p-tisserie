@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useGetPastriesWonQuery } from '../slices/gameApiSlice';
 import D1 from '../assets/1.jpg'
 import D2 from '../assets/2.jpg'
@@ -10,26 +10,17 @@ import '../styles/play.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { 
     updateDiceResult, 
-    updateDiceValue, 
     updateFrequencyNumber,
-    updateWonPastries 
+    updateWonPastries,
+    updateHasStarted,
+    updateShowResult,
+    updateRewardPastries,
 } from '../slices/gameDiceSlice';
 
 const Play = () => {
 
-    // const [diceResults, setDiceResults] = useState([1, 1, 1, 1, 1]);
-    // const [value, setValue] = useState(3);
-    // const [frequencyNumber, setFrequencyNumber] = useState(() => [0, 0, 0, 0, 0, 0], []);
-    // const [wonPastries, setWonPastries] = useState(0);
-    const [hasStarted, setHasStarted] = useState(false);
-    const [showResult, setShowResult] = useState(false);
-    const [rewardPastries, setRewardPastries] = useState([]);
-
     const dispatch = useDispatch();
-    const diceResult = useSelector((state) => state.gameDice.diceResult);
-    const diceValue = useSelector((state) => state.gameDice.value);
-    const frequencyNumber = useSelector((state) => state.gameDice.frequencyNumber);
-    const wonPastries = useSelector((state) => state.gameDice.wonPastries);
+    const game = useSelector((state) => state.gameDice);
 
     const dices = {
         1: D1,
@@ -41,48 +32,41 @@ const Play = () => {
     }
 
     const { data, isLoading, isSuccess, isError, error } = useGetPastriesWonQuery(
-        Math.max(...frequencyNumber)-1 > 0 ? Math.max(...frequencyNumber)-1 : 1
+        Math.max(...game.frequencyNumber)-1 > 0 ? Math.max(...game.frequencyNumber)-1 : 1
     );
 
     useEffect(() => {
         const checkWinningCombination = () => {
-            if(hasStarted && Math.max(...frequencyNumber) > 1){
+            if(game.hasStarted && Math.max(...game.frequencyNumber) > 1){
                 setTimeout(() => {
-                    dispatch(updateWonPastries(Math.max(...frequencyNumber)));
-                    setShowResult(true);
+                    dispatch(updateWonPastries());
+                    dispatch(updateShowResult());
                 }, 500);
             }
         }
 
         checkWinningCombination();
         
-    }, [frequencyNumber, hasStarted, dispatch]);
+    }, [dispatch, game.frequencyNumber, game.hasStarted]);
 
     useEffect(() => {
         if(isSuccess){
-            setRewardPastries(data);
+            dispatch(updateRewardPastries(data));
         }
-    }, [isSuccess, data])
+    }, [isSuccess, data, dispatch])
 
     const rollDice = () => {
-        if (diceValue > 0 && Math.max(...frequencyNumber) < 2 || diceValue === 3) {
+        if (game.value > 0 && Math.max(...game.frequencyNumber) < 2 || game.value === 3) {
             const newResults = Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1);
-            dispatch(updateDiceResult(newResults));
-            dispatch(updateDiceValue());
-            const newFrequency = [...frequencyNumber];
-            newResults.forEach((number) => {
-                newFrequency[number - 1] += 1;
-            });
-            dispatch(updateFrequencyNumber(newFrequency));
-
-            setHasStarted(true);
+            dispatch(updateDiceResult());
+            dispatch(updateFrequencyNumber(newResults));
+            dispatch(updateHasStarted());
         }
     }
 
     return (
         <div className='gamePage'>
             <h1>Jeu du yams</h1>
-            <p>Vous avez {diceValue} lancés</p>
             <p>
                 Si vous obtenez une paire (2 dés identiques), vous gagnez une pâtisserie. <br /> <br />
                 Si vous obtenez un brelan (3 dés identiques), vous gagnez 2 pâtisseries. <br /> <br />
@@ -90,14 +74,14 @@ const Play = () => {
                 Bonne chance !!
             </p>
             <ul className='game'>
-            {diceResult.map((result, index) => (
+            {game.diceResult.map((result, index) => (
                 <li key={index}>
                     <img src={dices[result]} alt={`dé ${index + 1}`} />
                 </li>
                 ))}
             </ul>
-            {hasStarted && showResult &&
-                (wonPastries > 1 ? (
+            {game.hasStarted && game.showResult &&
+                (game.wonPastries > 1 ? (
                     <div>
                         <p>
                             <strong>BRAVO</strong>, Vous avez gagné :
@@ -105,7 +89,7 @@ const Play = () => {
                         {isLoading && <p>Loading...</p>}
                         {isError && <p>Error: {error.message}</p>}
                         {isSuccess &&
-                            rewardPastries.map((reward, index) => (
+                            game.rewardPastries.map((reward, index) => (
                                 <p key={index}>- 1 {reward.name} </p>  
                             ))
                         } 
@@ -115,8 +99,8 @@ const Play = () => {
                 ))
             }   
             <button onClick={rollDice}>
-                {diceValue > 0 && Math.max(...frequencyNumber) < 2
-                    ? `Lancer les dés (${diceValue} essais restants)`
+                {game.value > 0 && Math.max(...game.frequencyNumber) < 2
+                    ? `Lancer les dés (${game.value} essais restants)`
                     : 
                     (
                         'Vous n\'avez plus d\'essais'
